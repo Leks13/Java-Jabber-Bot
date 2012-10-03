@@ -7,7 +7,7 @@ License: GPL v3
 Commands:  
 .uptime - display uptime  
 .report - send message to admin  
-.last - displays the 50 most recent recorded posts of the conference (if the bot is in it), or .last address@conference.jabber.tld if the boat is not in the conference.  
+.last - displays the 50 most recent recorded posts of the conference (if the bot is in it), or .last address@conference.jabber.tld if the bot is not in the conference.  
 .list - the list of recorded conferences  
 .help - display help    
 
