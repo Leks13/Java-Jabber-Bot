@@ -17,16 +17,16 @@ public class Parse {
         prop.load(is);
         String jid = prop.getProperty("jid");
         String nick = prop.getProperty("login");
-        String server = prop.getProperty("server");
+        String domain = prop.getProperty("domain");
         int port = Integer.parseInt(prop.getProperty("port", "5222"));
         if (jid != null) {
             StringTokenizer st = new StringTokenizer(jid, "@");
             while (st.hasMoreTokens()) {
                 nick = st.nextToken();
-                server = st.nextToken();
+                domain = st.nextToken();
             }
         }
-        String domain = prop.getProperty("domain", server);
+        String server = prop.getProperty("server", domain);
         String password = prop.getProperty("password");
         String adminB = prop.getProperty("admin");
         String resource = prop.getProperty("resource", "bot");
