@@ -112,18 +112,9 @@ public final class XmppNet {
 
     }
 
-    public static void pasrePacket(String message) throws XMPPException, IOException {
-        String jid, msg;
-        int start, finish;
-        start = message.indexOf("from=");
-        msg = new StringBuffer(message).delete(0, start + 6).toString();
-        finish = msg.indexOf("type=");
-        jid = new StringBuffer(msg).delete(finish - 2, msg.length()).toString();
-        start = message.indexOf("<body>");
-        msg = new StringBuffer(message).delete(0, start + 6).toString();
-        finish = msg.indexOf("</body>");
-        msg = new StringBuffer(msg).delete(finish, msg.length()).toString();
-        boolean ans;
+    public static void parseMessagePacket(Message message) throws XMPPException, IOException {
+        String jid = message.getFrom();
+        String msg = message.getBody();
         String log = jid + ":" + msg;
         if (jid.contains("@conference")) {
             Log.addToLogMuc(log, UserCommand.muc);
@@ -133,7 +124,7 @@ public final class XmppNet {
 //
 //             Commands
 //
-        ans = UserCommand.doUserCommand(msg, jid, admin);
+        boolean ans = UserCommand.doUserCommand(msg, jid, admin);
 
         if (ans == false && !(jid.contains("@conference."))) {
             sendMessage(jid, "Неизвестная команда! .help - список команд");
@@ -143,19 +134,16 @@ public final class XmppNet {
 
     public void incomeChat() throws InterruptedException {
 
-        PacketFilter filter = new AndFilter(new PacketTypeFilter(Message.class));
-        PacketCollector myCollector = connection.createPacketCollector(filter);
+    	PacketFilter filterMessage = new AndFilter(new PacketTypeFilter(Message.class));
+    	PacketCollector myMessageCollector = connection.createPacketCollector(filterMessage);
 
-        PacketListener myListener = new PacketListener() {
+        PacketListener messageListener = new PacketListener() {
             @Override
-            public void processPacket(Packet packet) {
-
-                String ID = null;
-                Packet.nextID();
-                String message = packet.toXML();
+            public void processPacket(Packet ppacket) {
+            	Message packet = (Message) ppacket;
                 try {
                     try {
-                        pasrePacket(message);
+                    	parseMessagePacket((Message) ppacket);
                     } catch (IOException ex) {
                         Logger.getLogger(XmppNet.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -167,7 +155,7 @@ public final class XmppNet {
             }
         };
 
-        connection.addPacketListener(myListener, filter);
+        connection.addPacketListener(messageListener, filterMessage);
 
     }
 }
